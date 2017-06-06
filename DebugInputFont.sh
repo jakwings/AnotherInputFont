@@ -7,7 +7,7 @@ function help {
     echo
     echo 'The debugged fonts have their name prefixed with "Debug-".'
     echo
-    echo 'Thanks for the developers of these projects:'
+    echo 'Thanks to the developers of these projects:'
     echo '* Input: http://input.fontbureau.com/'
     echo '* otfcc: https://github.com/caryll/otfcc'
     echo '*    jq: https://github.com/stedolan/jq'
@@ -17,7 +17,7 @@ FONTS=("$@")
 
 if [[ ${#FONTS[@]} -eq 0 ]]; then
     help
-    exit -1
+    exit
 fi
 
 function decode {
