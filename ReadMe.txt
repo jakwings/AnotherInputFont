@@ -11,3 +11,7 @@ Thanks to the developers of these projects:
 * Input: http://input.fontbureau.com/
 * otfcc: https://github.com/caryll/otfcc
 *    jq: https://github.com/stedolan/jq
+
+
+Funny, if you see a REAL bug stuck inside your laptop display, hope this helps.
+: https://superuser.com/questions/112921/
