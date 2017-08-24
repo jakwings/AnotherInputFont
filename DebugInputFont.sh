@@ -5,7 +5,7 @@ function help {
     echo
     echo "Usage: $(printf %q "$(basename -- "$0")") [FONT.ttf]..."
     echo
-    echo 'The debugged fonts have their name prefixed with "Debug-".'
+    echo 'The debugged fonts have their file names prefixed with "Debug-".'
     echo
     echo 'Thanks to the developers of these projects:'
     echo '* Input: http://input.fontbureau.com/'
