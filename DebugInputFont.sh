@@ -1,42 +1,51 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
-function help {
-    echo 'A small script to remove the hatred for Apple™ in the Input Fonts.'
-    echo
-    echo "Usage: $(printf %q "$(basename -- "$0")") [FONT.ttf]..."
-    echo
-    echo 'The debugged fonts have their file names prefixed with "Debug-".'
-    echo
-    echo 'Thanks to the developers of these projects:'
-    echo '* Input: http://input.fontbureau.com/'
-    echo '* otfcc: https://github.com/caryll/otfcc'
-    echo '*    jq: https://github.com/stedolan/jq'
+set -e
+
+help() {
+  echo 'A small script to remove the hatred for Apple™ in the Input Fonts.'
+  echo
+  echo 'Usage: sh DebugInputFont.sh [FONT.ttf]...'
+  echo
+  echo 'The debugged fonts have their filenames prefixed with "Debug-".'
+  echo
+  echo 'Thanks to the developers of these projects:'
+  echo '* Input: http://input.fontbureau.com/'
+  echo '* otfcc: https://github.com/caryll/otfcc'
+  echo '*    jq: https://github.com/stedolan/jq'
+}
+echo() {
+  printf '%s\n' "$*"
 }
 
-FONTS=("$@")
-
-if [[ ${#FONTS[@]} -eq 0 ]]; then
-    help
-    exit
+if [ "$#" -lt 1 ]; then
+  help
+  exit
 fi
 
-function decode {
-    otfccdump --ugly "$1"
+decode() {
+  otfccdump --ugly -- "$1"
 }
 
-function encode {
-    otfccbuild --keep-modified-time -o "$1"
+encode() {
+  otfccbuild --keep-modified-time -o "$1"
 }
 
-function debug {
-    local filter='
-        del(.cmap."U+F8FF", .cmap."U+1F41B", .glyf.apple)
-        | .glyph_order |= map(select(. != "apple"))
-    '
-    jq --compact-output "${filter}"
+debug() {
+  jq --compact-output '
+                      del(.cmap."U+F8FF", .cmap."U+1F41B", .glyf.apple)
+                      | .glyph_order |= map(select(. != "apple"))
+                      '
 }
 
-for input in "${FONTS[@]}"; do
-    output="Debugged-$(basename -- "${input}")"
-    decode "${input}" | debug | encode "${output}"
+for input; do
+  output="$(
+    echo "${input}" |
+      jq --slurp --raw-input --raw-output '
+                                          sub ( "(?<filename>[^/]+)$"
+                                              ; "Debugged-\(.filename)"
+                                              )
+                                          '
+  )"
+  decode "${input}" | debug | encode "${output}"
 done
